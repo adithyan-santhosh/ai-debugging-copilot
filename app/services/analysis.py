@@ -9,20 +9,27 @@ from ..core.openai_client import summarize_issue
 def _detect_slow_queries() -> List[IssueDetail]:
     issues = []
     for query in ingestion_store.db_queries:
-        if query.duration_ms and query.duration_ms > 500:
-            title = "Slow database query detected"
-            issues.append(
-                IssueDetail(
-                    id=str(uuid.uuid4()),
-                    category="db",
-                    severity=IssueSeverity.high,
-                    title=title,
-                    root_cause=f"Query took {query.duration_ms}ms: {query.query}",
-                    suggested_fix="Review query plan, add missing indexes, or break the query into smaller operations.",
-                    evidence=[query.query],
-                    optimization=_suggest_sql_optimization(query.query),
-                )
+        severity = IssueSeverity.low
+        if query.duration_ms:
+            if query.duration_ms > 1000:
+                severity = IssueSeverity.critical
+            elif query.duration_ms > 500:
+                severity = IssueSeverity.high
+            else:
+                severity = IssueSeverity.medium
+        title = "Database query executed"
+        issues.append(
+            IssueDetail(
+                id=str(uuid.uuid4()),
+                category="db",
+                severity=severity,
+                title=title,
+                root_cause=f"Query executed: {query.query}" + (f" in {query.duration_ms}ms" if query.duration_ms else ""),
+                suggested_fix="Review query performance and optimize if slow.",
+                evidence=[query.query],
+                optimization=_suggest_sql_optimization(query.query) if severity in [IssueSeverity.high, IssueSeverity.critical] else None,
             )
+        )
     return issues
 
 

@@ -20,7 +20,7 @@ const uploadEndpoints: Record<UploadType, string> = {
 const defaultJson = {
   logs: '[{ "timestamp": "2026-04-17T12:00:00Z", "level": "ERROR", "message": "Database timeout error", "service": "auth-service" }]',
   apiTraces: '[{ "path": "/api/login", "method": "POST", "status_code": 500, "latency_ms": 680, "request": {"email": "user@example.com"}, "response": {"error": "Internal server error"}, "error": "500 Internal Server Error" }]',
-  dbQueries: '[{ "query": "SELECT * FROM users WHERE email = \"user@example.com\"", "duration_ms": 1100, "database": "postgres", "error": "" }]',
+  dbQueries: '[{ "query": "SELECT * FROM users WHERE email = \'user@example.com\'", "duration_ms": 1100, "database": "postgres", "error": "" }]',
 }
 
 function App() {
@@ -29,6 +29,7 @@ function App() {
   const [payload, setPayload] = useState(defaultJson.logs)
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const [filteredSeverity, setFilteredSeverity] = useState<IssueSeverity | null>(null)
 
   const selectedEndpoint = uploadEndpoints[activeTab]
 
@@ -46,6 +47,8 @@ function App() {
       { critical: 0, high: 0, medium: 0, low: 0 },
     )
   }, [issues])
+
+  const filteredIssues = filteredSeverity ? issues.filter(issue => issue.severity === filteredSeverity) : issues
 
   const fetchIssues = async () => {
     setLoading(true)
@@ -68,7 +71,8 @@ function App() {
     try {
       const parsed = JSON.parse(payload)
       await axios.post(`${apiBaseUrl}${selectedEndpoint}`, parsed)
-      setMessage('Upload successful. Run analysis to refresh issues.')
+      setMessage('Upload successful. Running analysis...')
+      await analyze()
     } catch (error: any) {
       const errorMsg = error.response?.data?.detail || error.message || 'Unknown error'
       setMessage(`Upload failed: ${errorMsg}. Ensure the JSON payload is valid and the backend is running.`)
@@ -125,7 +129,7 @@ function App() {
           <h2>Issue summary</h2>
           <div className="summary-grid">
             {(['critical', 'high', 'medium', 'low'] as IssueSeverity[]).map((level) => (
-              <div key={level} className="summary-card">
+              <div key={level} className="summary-card" onClick={() => setFilteredSeverity(filteredSeverity === level ? null : level)} style={{cursor: 'pointer', background: filteredSeverity === level ? 'rgba(255, 255, 255, 0.1)' : undefined}}>
                 <strong>{level}</strong>
                 <span>{issueCounts[level]}</span>
               </div>
@@ -139,11 +143,11 @@ function App() {
       </section>
 
       <section className="panel issue-list">
-        <h2>Detected issues</h2>
-        {issues.length === 0 ? (
-          <p>No issues available. Upload example data and press "Run analysis".</p>
+        <h2>Detected issues {filteredSeverity ? `(${filteredSeverity})` : ''}</h2>
+        {filteredIssues.length === 0 ? (
+          <p>No issues available. {filteredSeverity ? `Try selecting a different severity or upload data.` : 'Upload example data and press "Run analysis".'}</p>
         ) : (
-          issues.map((issue) => (
+          filteredIssues.map((issue) => (
             <article key={issue.id} className="issue-card">
               <div className="issue-header">
                 <h3>{issue.title}</h3>
