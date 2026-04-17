@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 from pydantic import BaseModel, Field, HttpUrl
@@ -50,6 +51,7 @@ class IssueDetail(BaseModel):
     suggested_fix: str
     evidence: List[str]
     optimization: Optional[str] = None
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
 
 
 class AnalyzeRequest(BaseModel):

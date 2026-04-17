@@ -11,4 +11,5 @@ export interface IssueDetail {
   suggested_fix: string
   evidence: string[]
   optimization?: string
+  created_at: string
 }
