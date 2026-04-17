@@ -41,7 +41,7 @@ graph TB
     A[React Dashboard] --> B[FastAPI Backend]
     B --> C[Data Ingestion Service]
     B --> D[Analysis Service]
-    B --> E[Vector Store (FAISS)]
+    B --> E["Vector Store (FAISS)"]
     B --> F[OpenAI Client]
     D --> F
     C --> E
