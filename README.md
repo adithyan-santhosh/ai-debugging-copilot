@@ -206,17 +206,3 @@ ENVIRONMENT=development
 - **DBQuery**: `query`, `duration_ms`, `database`, `collection`, `error`
 - **IssueDetail**: `id`, `category`, `severity`, `title`, `root_cause`, `suggested_fix`, `evidence`, `optimization`, `created_at`
 
-## 🤝 Contributing
-
-1. Fork the repo
-2. Create feature branch
-3. Make changes with tests
-4. Submit PR
-
-## 📄 License
-
-MIT License - see LICENSE file for details.
-
----
-
-Built with ❤️ for backend debugging automation.
