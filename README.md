@@ -1,5 +1,12 @@
 # AI Debugging Copilot
 
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![FAISS](https://img.shields.io/badge/FAISS-blue?style=for-the-badge&logo=facebook&logoColor=white)
+![RAG](https://img.shields.io/badge/Architecture-RAG-orange?style=for-the-badge)
+![Ollama](https://img.shields.io/badge/Ollama-LLM-white?style=for-the-badge)
+
 A full-stack application for backend system debugging using AI and RAG (Retrieval-Augmented Generation). It ingests logs, API traces, and database queries to detect issues, provide root cause analysis, suggest fixes, and optimize queries.
 
 ## 🚀 Features
